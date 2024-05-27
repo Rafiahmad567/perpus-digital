@@ -3,23 +3,20 @@
         <div class="row">
             <div class="col-lg-12">
                 <h2 class="text-center my-4"> ISI BUKU KUNJUNGAN</h2>
-                <form>
+                <form @submit.prevent="kirimData">
                     <div class="mb-3">
-                        <input type="text" class="form-control form-control-lg rounded-5" placeholder="NAMA....">
+                        <input v-model="form.nama" type="text" class="form-control form-control-lg rounded-5" placeholder="NAMA....">
                     </div>
                     <div class="mb-3">
-                        <select class="form-control form-control-lg form-select rounded-5">
-                            <option value="">KATEGORI</option>
-                            <option value="siswa">siswa</option>
-                            <option value="guru">guru</option>
-                            <option value="staf">staf</option>
-                            <option value="umum">umum</option>
+                        <select v-model="form.keanggotaan" class="form-control form-control-lg form-select rounded-5">
+                            <option value="">kategori</option>
+                            <option v-for="(member,i) in Members" :key="i" :value="member.id">{{ member.Nama }}</option>
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3" v-if="form.keanggotaan == '1'">
                         <div class="row">
                             <div class="col-md-4">
-                                <select class="form-control form-control-lg form-select rounded-5 mb-2">
+                                <select v-model="form.tingkat" class="form-control form-control-lg form-select rounded-5 mb-2">
                                     <option value="">TINGKAT</option>
                                     <option value="X">X</option>
                                     <option value="XI">XI</option>
@@ -27,7 +24,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <select class="form-control form-control-lg form-select rounded-5 mb-2">
+                                <select v-model="form.jurusan" class="form-control form-control-lg form-select rounded-5 mb-2">
                                     <option value="">JURUSAN</option>
                                 <option value="PPLG">PPLG</option>
                                 <option value="TJKT">TJKT</option>
@@ -37,7 +34,7 @@
                             </select>
                             </div>
                             <div class="col-md-4">
-                                <select class="form-control form-control-lg form-select rounded-5 mb-2">
+                                <select v-model="form.kelas" class="form-control form-control-lg form-select rounded-5 mb-2">
                                     <option value="">KELAS</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -48,18 +45,55 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <select class="form-control form-control-lg form-select rounded-5">
+                        <select v-model="form.keperluan" class="form-control form-control-lg form-select rounded-5">
                             <option value="">KEPERLUAN</option>
-                            <option value="BACA">baca buku</option>
-                            <option value="PINJAM">pinjam buku</option>
-                            <option value="KEMBALIKAN">kembalikan</option>
-                        </select>
+                            <option v-for="(item,i) in objectives" :key="i" :value="item.id">{{ item.nama }}</option>
+                            </select>
                     </div>
-                    <nuxt-link to="/pengunjung/">
-                    <button type="submit" class="btn btn-dark btn-lg rounded-5 px-5">KIRIM</button>
-                    </nuxt-link>
+                    <div><button type="submit" class="btn btn-dark btn-lg rounded-5 px-5">KIRIM</button></div>
+                    
                 </form>
             </div>
-        </div>
+            </div>
     </div>
 </template>
+
+<script setup>
+const supabase = useSupabaseClient()
+
+const Members = ref([])
+
+const objectives = ref([])
+
+
+const form = ref({
+    nama: "",
+    keanggotaan: "",
+    tingkat: "",
+    jurusan: "",
+    kelas: "",
+    keperluan: "",
+})
+
+const kirimData = async () => {
+    const {data,error} = await supabase.from('pengunjung').insert([form.value])
+    if(!error) navigateTo('/pengunjung')
+    console.log(error)
+}
+
+const getKeanggotaan = async () => {
+    const { data, error } = await supabase.from('Keanggotaan').select('*')
+    if(data) Members.value = data
+}
+
+const getKeperluan = async () => {
+    const { data, error } = await supabase.from('Keperluan').select ('*')
+    if(data) objectives.value = data
+}
+
+onMounted(() => {
+    getKeanggotaan()
+    getKeperluan()
+})
+</script>
+
