@@ -51,13 +51,13 @@
     box-shadow: 1px 1px 10px #EEE7E7;
 }
 .card.bg-pengunjung {
-    background-image: url('../assets/bg-home-kunjungan.jpeg');
+    background-image: url('../assets/bg-home-kunjungan.webp');
     background-repeat: no repeat;
     background-position: center center;
     background-size: cover;
 }
 .card.bg-buku {
-    background: url('../assets/bg-home-cari-buku.jpg') no-repeat center center;
+    background: url('../assets/bg-home-cari-buku.webp') no-repeat center center;
     background-size: cover;
 }
 .raccing{
